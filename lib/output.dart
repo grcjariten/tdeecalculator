@@ -1,16 +1,17 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:tdeecalculator/about.dart';
+import 'package:tdeecalculator/theme.dart';
+import 'package:tdeecalculator/ui/app_background.dart';
 
 class OutputPage extends StatelessWidget {
-  const OutputPage(
-      {Key? key,
-      required this.finalTdee,
-      required this.tdee,
-      required this.bmr,
-      required this.bmi,
-      required this.idealWeight
-      })
-      : super(key: key);
+  const OutputPage({
+    Key? key,
+    required this.finalTdee,
+    required this.tdee,
+    required this.bmr,
+    required this.bmi,
+    required this.idealWeight,
+  }) : super(key: key);
 
   final double finalTdee;
   final double tdee;
@@ -18,110 +19,255 @@ class OutputPage extends StatelessWidget {
   final double bmi;
   final double idealWeight;
 
+  String _asWhole(double value) => value.round().toString();
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blueGrey[700],
-        title: const Text("Your results"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-              icon: const Icon(Icons.info_outline),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>
-                        const InfoPage()
-                    )
-                );
-              },
-            )
-
-        ],
-      ),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(84, 24, 84, 24),
+          const AppBackground(),
+          SafeArea(
             child: SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Text("Your Target Calories", style: titleStyle()),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Colors.blueGrey[700],
-                          borderRadius: const BorderRadius.all(Radius.circular(6))),
-                      child:
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Text("${finalTdee.truncate()}", style: headerNumbersStyle(),),
-                                Text("calories per day", style: headerStyle(),),
-                                const Divider(color: Colors.white,thickness: 2,),
-                                Text("${(finalTdee * 7).truncate()}", style: headerNumbersStyle(),),
-                                Text("calories per week", style: headerStyle(),),
-
-                  ],
-                ),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.arrow_back),
+                        color: Colors.white,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          'Your results',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
                           ),
-          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const InfoPage(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.info_outline),
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _highlightCard(theme),
+                  const SizedBox(height: 18),
+                  Text(
+                    'Breakdown',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final twoColumn = constraints.maxWidth >= 380;
+                      final tiles = [
+                        _metricTile(
+                          theme,
+                          label: 'Target calories',
+                          value: _asWhole(finalTdee),
+                          unit: 'per day',
+                        ),
+                        _metricTile(
+                          theme,
+                          label: 'Maintenance',
+                          value: _asWhole(tdee),
+                          unit: 'per day',
+                        ),
+                        _metricTile(
+                          theme,
+                          label: 'BMR',
+                          value: _asWhole(bmr),
+                          unit: 'calories',
+                        ),
+                        _metricTile(
+                          theme,
+                          label: 'BMI',
+                          value: _asWhole(bmi),
+                          unit: '',
+                        ),
+                        _metricTile(
+                          theme,
+                          label: 'Ideal weight',
+                          value: _asWhole(idealWeight),
+                          unit: 'kg',
+                        ),
+                      ];
 
+                      if (!twoColumn) {
+                        return Column(
+                          children: tiles
+                              .map(
+                                (tile) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: tile,
+                                ),
+                              )
+                              .toList(),
+                        );
+                      }
 
-    ]),
+                      return Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: tiles
+                            .map(
+                              (tile) => SizedBox(
+                                width:
+                                    (constraints.maxWidth - 12) / 2,
+                                child: tile,
+                              ),
+                            )
+                            .toList(),
+                      );
+                    },
+                  ),
+                ],
               ),
-            )),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Divider(color: Colors.blueGrey[800], thickness: 2,),
-                Text("Your target calories (TDEE): ${(finalTdee).truncate()}", style: bodyStyle(),),
-                Text("Your maintenance calories: ${(tdee).truncate()}", style: bodyStyle(),),
-                Text("Basal Metabolic Rate (BMR): ${(bmr).truncate()}", style: bodyStyle(),),
-                Text("Body Mass Index (BMI): ${(bmi).truncate()}", style: bodyStyle(),),
-                Text("Your Ideal Body Weight: ${(idealWeight).truncate()}", style: bodyStyle(),)
-
-
-              ],
             ),
           ),
-
         ],
-      ));
-  }
-
-  TextStyle titleStyle() {
-    return const TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 18
+      ),
     );
   }
 
-  TextStyle headerStyle() {
-    return const TextStyle(
-
-        color: Colors.white,
-        fontSize: 15
+  Widget _highlightCard(ThemeData theme) {
+    final weekly = finalTdee * 7;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0F6C6D), Color(0xFF0B3C40)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F1A1B).withOpacity(0.25),
+            blurRadius: 24,
+            offset: const Offset(0, 18),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Daily target',
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: Colors.white70,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _asWhole(finalTdee),
+            style: theme.textTheme.displaySmall?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'calories per day',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: Colors.white70,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Divider(color: Colors.white.withOpacity(0.2), height: 1),
+          const SizedBox(height: 14),
+          Text(
+            'Weekly target',
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: Colors.white70,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _asWhole(weekly),
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Text(
+            'calories per week',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: Colors.white70,
+            ),
+          ),
+        ],
+      ),
     );
   }
-  TextStyle headerNumbersStyle() {
-    return const TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-        fontSize: 35
-    );
-  }
 
-  TextStyle bodyStyle() {
-    return const TextStyle(
-        fontSize: 16
+  Widget _metricTile(
+    ThemeData theme, {
+    required String label,
+    required String value,
+    required String unit,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      decoration: BoxDecoration(
+        color: kSurface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFE1D9CF)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: const Color(0xFF5E6768),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Text(
+                value,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              if (unit.isNotEmpty) ...[
+                const SizedBox(width: 6),
+                Text(
+                  unit,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF5E6768),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
