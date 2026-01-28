@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:tdeecalculator/l10n/app_localizations.dart';
 import 'package:tdeecalculator/about.dart';
 import 'package:tdeecalculator/theme.dart';
 import 'package:tdeecalculator/ui/app_background.dart';
@@ -24,6 +25,7 @@ class OutputPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Stack(
@@ -45,7 +47,7 @@ class OutputPage extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          'Your results',
+                          l10n.resultsTitle,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -67,10 +69,10 @@ class OutputPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _highlightCard(theme),
+                  _highlightCard(theme, l10n),
                   const SizedBox(height: 18),
                   Text(
-                    'Breakdown',
+                    l10n.breakdown,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -83,33 +85,33 @@ class OutputPage extends StatelessWidget {
                       final tiles = [
                         _metricTile(
                           theme,
-                          label: 'Target calories',
+                          label: l10n.targetCalories,
                           value: _asWhole(finalTdee),
-                          unit: 'per day',
+                          unit: l10n.perDay,
                         ),
                         _metricTile(
                           theme,
-                          label: 'Maintenance',
+                          label: l10n.maintenance,
                           value: _asWhole(tdee),
-                          unit: 'per day',
+                          unit: l10n.perDay,
                         ),
                         _metricTile(
                           theme,
-                          label: 'BMR',
+                          label: l10n.bmr,
                           value: _asWhole(bmr),
-                          unit: 'calories',
+                          unit: l10n.calories,
                         ),
                         _metricTile(
                           theme,
-                          label: 'BMI',
+                          label: l10n.bmi,
                           value: _asWhole(bmi),
                           unit: '',
                         ),
                         _metricTile(
                           theme,
-                          label: 'Ideal weight',
+                          label: l10n.idealWeight,
                           value: _asWhole(idealWeight),
-                          unit: 'kg',
+                          unit: l10n.kgUnit,
                         ),
                       ];
 
@@ -132,8 +134,7 @@ class OutputPage extends StatelessWidget {
                         children: tiles
                             .map(
                               (tile) => SizedBox(
-                                width:
-                                    (constraints.maxWidth - 12) / 2,
+                                width: (constraints.maxWidth - 12) / 2,
                                 child: tile,
                               ),
                             )
@@ -150,7 +151,7 @@ class OutputPage extends StatelessWidget {
     );
   }
 
-  Widget _highlightCard(ThemeData theme) {
+  Widget _highlightCard(ThemeData theme, AppLocalizations l10n) {
     final weekly = finalTdee * 7;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
@@ -173,7 +174,7 @@ class OutputPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Daily target',
+            l10n.dailyTarget,
             style: theme.textTheme.titleMedium?.copyWith(
               color: Colors.white70,
               fontWeight: FontWeight.w600,
@@ -189,7 +190,7 @@ class OutputPage extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'calories per day',
+            l10n.caloriesPerDay,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: Colors.white70,
             ),
@@ -198,7 +199,7 @@ class OutputPage extends StatelessWidget {
           Divider(color: Colors.white.withOpacity(0.2), height: 1),
           const SizedBox(height: 14),
           Text(
-            'Weekly target',
+            l10n.weeklyTarget,
             style: theme.textTheme.titleMedium?.copyWith(
               color: Colors.white70,
               fontWeight: FontWeight.w600,
@@ -213,7 +214,7 @@ class OutputPage extends StatelessWidget {
             ),
           ),
           Text(
-            'calories per week',
+            l10n.caloriesPerWeek,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: Colors.white70,
             ),

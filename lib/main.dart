@@ -1,11 +1,25 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:tdeecalculator/ads/banner_ad_widget.dart';
+import 'package:tdeecalculator/l10n/app_localizations.dart';
 import 'package:tdeecalculator/functions.dart';
 import 'package:tdeecalculator/output.dart';
 import 'package:tdeecalculator/theme.dart';
 import 'package:tdeecalculator/ui/app_background.dart';
-
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    await MobileAds.instance.updateRequestConfiguration(
+      RequestConfiguration(
+        tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
+        tagForUnderAgeOfConsent: TagForUnderAgeOfConsent.yes,
+        maxAdContentRating: MaxAdContentRating.g,
+      ),
+    );
+    await MobileAds.instance.initialize();
+  }
   runApp(const MyApp());
 }
 
@@ -16,8 +30,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'TDEE Calculator',
+      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       theme: buildAppTheme(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: const MainPage(),
     );
   }
@@ -52,25 +68,11 @@ class _MainPageState extends State<MainPage> {
     'Elite',
   ];
 
-  final Map<String, String> activityLabels = const {
-    'Sedentary': 'Sedentary',
-    'Light': 'Light activity',
-    'Moderate': 'Moderate activity',
-    'High': 'High activity',
-    'Elite': 'Elite athlete',
-  };
-
   final List<String> goals = const [
     'Maintain',
     'Lose',
     'Gain',
   ];
-
-  final Map<String, String> goalLabels = const {
-    'Maintain': 'Maintain weight',
-    'Lose': 'Lose weight',
-    'Gain': 'Gain weight',
-  };
 
   final List<String> imperialHeights = const [
     '4ft 7in',
@@ -114,23 +116,52 @@ class _MainPageState extends State<MainPage> {
     super.dispose();
   }
 
+  String activityLabel(String value, AppLocalizations l10n) {
+    switch (value) {
+      case 'Sedentary':
+        return l10n.activitySedentary;
+      case 'Light':
+        return l10n.activityLight;
+      case 'Moderate':
+        return l10n.activityModerate;
+      case 'High':
+        return l10n.activityHigh;
+      case 'Elite':
+        return l10n.activityElite;
+    }
+    return value;
+  }
+
+  String goalLabel(String value, AppLocalizations l10n) {
+    switch (value) {
+      case 'Maintain':
+        return l10n.goalMaintain;
+      case 'Lose':
+        return l10n.goalLose;
+      case 'Gain':
+        return l10n.goalGain;
+    }
+    return value;
+  }
+
   String? validateNumber(
     String? value, {
     required double min,
     required double max,
+    required AppLocalizations l10n,
     bool optional = false,
   }) {
     if (value == null || value.trim().isEmpty) {
-      return optional ? null : 'Required';
+      return optional ? null : l10n.validationRequired;
     }
 
     final number = double.tryParse(value);
     if (number == null) {
-      return 'Invalid number';
+      return l10n.validationInvalidNumber;
     }
 
     if (number < min || number > max) {
-      return 'Out of range';
+      return l10n.validationOutOfRange;
     }
 
     return null;
@@ -183,6 +214,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Stack(
@@ -195,7 +227,7 @@ class _MainPageState extends State<MainPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'TDEE Calculator',
+                    l10n.appTitle,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -203,15 +235,15 @@ class _MainPageState extends State<MainPage> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Find your maintenance calories and daily target.',
+                    l10n.appSubtitle,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: Colors.white.withOpacity(0.85),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _unitsCard(theme),
+                  _unitsCard(theme, l10n),
                   const SizedBox(height: 18),
-                  _formCard(theme),
+                  _formCard(theme, l10n),
                 ],
               ),
             ),
@@ -221,7 +253,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _unitsCard(ThemeData theme) {
+  Widget _unitsCard(ThemeData theme, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -233,16 +265,16 @@ class _MainPageState extends State<MainPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Units',
+            l10n.unitsLabel,
             style: theme.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w600,
               color: Colors.white,
             ),
           ),
           SegmentedButton<bool>(
-            segments: const [
-              ButtonSegment(value: false, label: Text('Metric')),
-              ButtonSegment(value: true, label: Text('Imperial')),
+            segments: [
+              ButtonSegment(value: false, label: Text(l10n.metric)),
+              ButtonSegment(value: true, label: Text(l10n.imperial)),
             ],
             selected: {imperial},
             onSelectionChanged: (selection) {
@@ -252,12 +284,12 @@ class _MainPageState extends State<MainPage> {
             },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.resolveWith(
-                (states) => states.contains(WidgetState.selected)
+                (states) => states.contains(MaterialState.selected)
                     ? Colors.white
                     : Colors.transparent,
               ),
               foregroundColor: MaterialStateProperty.resolveWith(
-                (states) => states.contains(WidgetState.selected)
+                (states) => states.contains(MaterialState.selected)
                     ? const Color(0xFF0F6C6D)
                     : Colors.white,
               ),
@@ -277,7 +309,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _formCard(ThemeData theme) {
+  Widget _formCard(ThemeData theme, AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
         color: theme.cardTheme.color,
@@ -300,13 +332,13 @@ class _MainPageState extends State<MainPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Basics',
+                  l10n.basics,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 12),
-                _genderSelector(theme),
+                _genderSelector(theme, l10n),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: ageController,
@@ -316,31 +348,32 @@ class _MainPageState extends State<MainPage> {
                     value,
                     min: 5,
                     max: 100,
+                    l10n: l10n,
                   ),
-                  decoration: const InputDecoration(
-                    labelText: 'Age',
-                    suffixText: 'years',
+                  decoration: InputDecoration(
+                    labelText: l10n.age,
+                    suffixText: l10n.years,
                   ),
                 ),
                 const SizedBox(height: 12),
                 twoColumn
                     ? Row(
                         children: [
-                          Expanded(child: _weightField()),
+                          Expanded(child: _weightField(l10n)),
                           const SizedBox(width: 12),
-                          Expanded(child: _heightField()),
+                          Expanded(child: _heightField(l10n)),
                         ],
                       )
                     : Column(
                         children: [
-                          _weightField(),
+                          _weightField(l10n),
                           const SizedBox(height: 12),
-                          _heightField(),
+                          _heightField(l10n),
                         ],
                       ),
                 const SizedBox(height: 16),
                 Text(
-                  'Activity',
+                  l10n.activitySection,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -352,7 +385,7 @@ class _MainPageState extends State<MainPage> {
                       .map(
                         (activity) => DropdownMenuItem<String>(
                           value: activity,
-                          child: Text(activityLabels[activity] ?? activity),
+                          child: Text(activityLabel(activity, l10n)),
                         ),
                       )
                       .toList(),
@@ -364,7 +397,7 @@ class _MainPageState extends State<MainPage> {
                       selectedActivity = value;
                     });
                   },
-                  decoration: const InputDecoration(labelText: 'Activity level'),
+                  decoration: InputDecoration(labelText: l10n.activityLevel),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
@@ -376,15 +409,16 @@ class _MainPageState extends State<MainPage> {
                     min: 3,
                     max: 50,
                     optional: true,
+                    l10n: l10n,
                   ),
-                  decoration: const InputDecoration(
-                    labelText: 'Body fat (optional)',
+                  decoration: InputDecoration(
+                    labelText: l10n.bodyFatOptional,
                     suffixText: '%',
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Goal',
+                  l10n.goalSection,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -396,7 +430,7 @@ class _MainPageState extends State<MainPage> {
                       .map(
                         (goal) => DropdownMenuItem<String>(
                           value: goal,
-                          child: Text(goalLabels[goal] ?? goal),
+                          child: Text(goalLabel(goal, l10n)),
                         ),
                       )
                       .toList(),
@@ -408,14 +442,14 @@ class _MainPageState extends State<MainPage> {
                       selectedGoal = value;
                     });
                   },
-                  decoration: const InputDecoration(labelText: 'Goal'),
+                  decoration: InputDecoration(labelText: l10n.goal),
                 ),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: submit,
-                    child: const Text('Calculate'),
+                    child: Text(l10n.calculate),
                   ),
                 ),
               ],
@@ -426,20 +460,20 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _genderSelector(ThemeData theme) {
+  Widget _genderSelector(ThemeData theme, AppLocalizations l10n) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Gender',
+          l10n.gender,
           style: theme.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
         SegmentedButton<bool>(
-          segments: const [
-            ButtonSegment(value: false, label: Text('Male')),
-            ButtonSegment(value: true, label: Text('Female')),
+          segments: [
+            ButtonSegment(value: false, label: Text(l10n.male)),
+            ButtonSegment(value: true, label: Text(l10n.female)),
           ],
           selected: {female},
           onSelectionChanged: (selection) {
@@ -449,12 +483,12 @@ class _MainPageState extends State<MainPage> {
           },
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.resolveWith(
-              (states) => states.contains(WidgetState.selected)
+              (states) => states.contains(MaterialState.selected)
                   ? const Color(0xFF0F6C6D)
                   : const Color(0xFFF2EEE8),
             ),
             foregroundColor: MaterialStateProperty.resolveWith(
-              (states) => states.contains(WidgetState.selected)
+              (states) => states.contains(MaterialState.selected)
                   ? Colors.white
                   : const Color(0xFF1C1F20),
             ),
@@ -473,7 +507,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _weightField() {
+  Widget _weightField(AppLocalizations l10n) {
     return TextFormField(
       controller: weightController,
       keyboardType: TextInputType.number,
@@ -482,15 +516,16 @@ class _MainPageState extends State<MainPage> {
         value,
         min: imperial ? 77 : 35,
         max: imperial ? 661 : 300,
+        l10n: l10n,
       ),
       decoration: InputDecoration(
-        labelText: 'Weight',
+        labelText: l10n.weight,
         suffixText: imperial ? 'lb' : 'kg',
       ),
     );
   }
 
-  Widget _heightField() {
+  Widget _heightField(AppLocalizations l10n) {
     if (imperial) {
       return DropdownButtonFormField<String>(
         value: selectedHeight,
@@ -510,7 +545,7 @@ class _MainPageState extends State<MainPage> {
             selectedHeight = value;
           });
         },
-        decoration: const InputDecoration(labelText: 'Height'),
+        decoration: InputDecoration(labelText: l10n.height),
       );
     }
 
@@ -522,11 +557,15 @@ class _MainPageState extends State<MainPage> {
         value,
         min: 100,
         max: 220,
+        l10n: l10n,
       ),
-      decoration: const InputDecoration(
-        labelText: 'Height',
+      decoration: InputDecoration(
+        labelText: l10n.height,
         suffixText: 'cm',
       ),
     );
   }
 }
+
+
+
