@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:tdeecalculator/ads/banner_ad_widget.dart';
 import 'package:tdeecalculator/l10n/app_localizations.dart';
 import 'package:tdeecalculator/functions.dart';
 import 'package:tdeecalculator/output.dart';
@@ -59,6 +58,7 @@ class _MainPageState extends State<MainPage> {
   String selectedActivity = 'Sedentary';
   String selectedGoal = 'Maintain';
   String selectedHeight = '5ft 7in';
+  BmrFormula selectedFormula = BmrFormula.harrisBenedict;
 
   final List<String> activities = const [
     'Sedentary',
@@ -144,6 +144,17 @@ class _MainPageState extends State<MainPage> {
     return value;
   }
 
+  String formulaLabel(BmrFormula value, AppLocalizations l10n) {
+    switch (value) {
+      case BmrFormula.harrisBenedict:
+        return l10n.formulaHarris;
+      case BmrFormula.mifflinStJeor:
+        return l10n.formulaMifflin;
+      case BmrFormula.katchMcArdle:
+        return l10n.formulaKatch;
+    }
+  }
+
   String? validateNumber(
     String? value, {
     required double min,
@@ -182,32 +193,22 @@ class _MainPageState extends State<MainPage> {
         ? 0.0
         : double.parse(bodyfatController.text);
 
-    final genderIndex = female ? 655.0955 : 66.4730;
-    final weightIndex = female ? 9.5634 : 13.7516;
-    final heightIndex = female ? 1.8496 : 5.0033;
-    final ageIndex = female ? 4.6756 : 6.7550;
+    final results = calculateResults(
+      female: female,
+      ageYears: age,
+      weightKg: weightKg,
+      heightCm: heightCm,
+      bodyFatPercent: bodyfat,
+      selectedActivity: selectedActivity,
+      selectedGoal: selectedGoal,
+      selectedFormula: selectedFormula,
+    );
 
-    final idealWeight = female
-        ? heightCm - 100 - (heightCm - 150) / 2
-        : heightCm - 100 - (heightCm - 150) / 4;
-
-    formValidate(
+    Navigator.push(
       context,
-      bodyfat,
-      weightKg,
-      weightIndex,
-      idealWeight,
-      heightCm,
-      heightIndex,
-      age,
-      ageIndex,
-      genderIndex,
-      selectedActivity,
-      selectedGoal,
-      0,
-      0,
-      0,
-      0,
+      MaterialPageRoute(
+        builder: (context) => OutputPage(results: results),
+      ),
     );
   }
 
@@ -215,6 +216,8 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final fadeHeight = 36.0 + bottomInset;
 
     return Scaffold(
       body: Stack(
@@ -222,7 +225,7 @@ class _MainPageState extends State<MainPage> {
           const AppBackground(),
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
+              padding: EdgeInsets.fromLTRB(20, 24, 20, 28 + bottomInset),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -245,6 +248,26 @@ class _MainPageState extends State<MainPage> {
                   const SizedBox(height: 18),
                   _formCard(theme, l10n),
                 ],
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: IgnorePointer(
+              child: Container(
+                height: fadeHeight,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      const Color(0xFF0B2C2F).withValues(alpha: 0.85),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -404,17 +427,54 @@ class _MainPageState extends State<MainPage> {
                   controller: bodyfatController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  validator: (value) => validateNumber(
-                    value,
-                    min: 3,
-                    max: 50,
-                    optional: true,
-                    l10n: l10n,
-                  ),
+                  validator: (value) {
+                    if (selectedFormula == BmrFormula.katchMcArdle &&
+                        (value == null || value.trim().isEmpty)) {
+                      return l10n.validationBodyFatRequired;
+                    }
+                    return validateNumber(
+                      value,
+                      min: 3,
+                      max: 50,
+                      optional: selectedFormula != BmrFormula.katchMcArdle,
+                      l10n: l10n,
+                    );
+                  },
                   decoration: InputDecoration(
-                    labelText: l10n.bodyFatOptional,
+                    labelText: selectedFormula == BmrFormula.katchMcArdle
+                        ? l10n.bodyFatRequired
+                        : l10n.bodyFatOptional,
                     suffixText: '%',
                   ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.formulaSection,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<BmrFormula>(
+                  value: selectedFormula,
+                  items: BmrFormula.values
+                      .map(
+                        (formula) => DropdownMenuItem<BmrFormula>(
+                          value: formula,
+                          child: Text(formulaLabel(formula, l10n)),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value == null) {
+                      return;
+                    }
+                    setState(() {
+                      selectedFormula = value;
+                    });
+                    formKey.currentState?.validate();
+                  },
+                  decoration: InputDecoration(labelText: l10n.formulaLabel),
                 ),
                 const SizedBox(height: 16),
                 Text(

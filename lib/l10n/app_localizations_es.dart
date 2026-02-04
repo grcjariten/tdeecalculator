@@ -73,6 +73,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String get bodyFatOptional => 'Grasa corporal (opcional)';
 
   @override
+  String get bodyFatRequired => 'Grasa corporal (obligatoria)';
+
+  @override
+  String get formulaSection => 'Fórmula';
+
+  @override
+  String get formulaLabel => 'Fórmula BMR';
+
+  @override
+  String get formulaHarris => 'Harris-Benedict (original)';
+
+  @override
+  String get formulaMifflin => 'Mifflin-St Jeor';
+
+  @override
+  String get formulaKatch => 'Katch-McArdle';
+
+  @override
   String get goalSection => 'Objetivo';
 
   @override
@@ -100,6 +118,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get validationOutOfRange => 'Fuera de rango';
 
   @override
+  String get validationBodyFatRequired =>
+      'Grasa corporal obligatoria para Katch-McArdle.';
+
+  @override
   String get resultsTitle => 'Tus resultados';
 
   @override
@@ -118,6 +140,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get breakdown => 'Detalle';
 
   @override
+  String get formulaUsed => 'Fórmula usada';
+
+  @override
   String get targetCalories => 'Calorías objetivo';
 
   @override
@@ -128,6 +153,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get bmi => 'BMI';
+
+  @override
+  String get bmiPrime => 'BMI prime';
+
+  @override
+  String get newBmi => 'Nuevo BMI';
+
+  @override
+  String get bmiAlternatives => 'Alternativas BMI';
 
   @override
   String get idealWeight => 'Peso ideal';
@@ -142,34 +176,75 @@ class AppLocalizationsEs extends AppLocalizations {
   String get kgUnit => 'kg';
 
   @override
+  String get compareFormulas => 'Comparar fórmulas';
+
+  @override
+  String get requiresBodyFat => 'Requiere grasa corporal';
+
+  @override
+  String get copyResults => 'Copiar';
+
+  @override
+  String get shareResults => 'Compartir';
+
+  @override
+  String get resultsCopied => 'Resultados copiados';
+
+  @override
   String get aboutTitle => 'Acerca de';
 
   @override
   String get formulasUsed => 'Fórmulas usadas';
 
   @override
-  String get tdeeUsesHB => '- El TDEE usa la ecuación de Harris-Benedict.';
+  String get tdeeUsesHB =>
+      '- El TDEE usa la fórmula seleccionada (Harris-Benedict, Mifflin-St Jeor o Katch-McArdle).';
 
   @override
-  String get menMetric => 'Hombres (métrico)';
+  String get harrisBenedictTitle => 'Harris-Benedict';
+
+  @override
+  String get menMetric => 'Hombres (Harris-Benedict)';
 
   @override
   String get menMetricFormula =>
       'BMR = 66.5 + (13.76 x peso kg) + (5.003 x altura cm) - (6.755 x edad)';
 
   @override
-  String get womenMetric => 'Mujeres (métrico)';
+  String get womenMetric => 'Mujeres (Harris-Benedict)';
 
   @override
   String get womenMetricFormula =>
       'BMR = 655 + (9.563 x peso kg) + (1.850 x altura cm) - (4.676 x edad)';
 
   @override
-  String get bodyFatNote =>
-      '- Si se indica grasa corporal, el TDEE usa Katch-McArdle:';
+  String get mifflinTitle => 'Mifflin-St Jeor';
+
+  @override
+  String get mifflinMenFormula =>
+      'Hombres: BMR = (10 x peso kg) + (6.25 x altura cm) - (5 x edad) + 5';
+
+  @override
+  String get mifflinWomenFormula =>
+      'Mujeres: BMR = (10 x peso kg) + (6.25 x altura cm) - (5 x edad) - 161';
+
+  @override
+  String get bodyFatNote => 'Katch-McArdle (requiere grasa corporal):';
 
   @override
   String get katchFormula => 'BMR = 370 + (21.6 x LBM)';
+
+  @override
+  String get bmiFormulasTitle => 'Fórmulas BMI';
+
+  @override
+  String get bmiFormula => 'BMI = peso kg / altura m^2';
+
+  @override
+  String get bmiPrimeFormula => 'BMI prime = BMI / 25';
+
+  @override
+  String get newBmiFormula => 'Nuevo BMI = 1.3 x peso kg / altura m^2.5';
 
   @override
   String get idealWeightNote => '- El peso ideal usa la fórmula de Lorenz:';

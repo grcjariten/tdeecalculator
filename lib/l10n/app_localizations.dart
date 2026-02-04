@@ -228,6 +228,42 @@ abstract class AppLocalizations {
   /// **'Body fat (optional)'**
   String get bodyFatOptional;
 
+  /// No description provided for @bodyFatRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Body fat (required)'**
+  String get bodyFatRequired;
+
+  /// No description provided for @formulaSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Formula'**
+  String get formulaSection;
+
+  /// No description provided for @formulaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'BMR formula'**
+  String get formulaLabel;
+
+  /// No description provided for @formulaHarris.
+  ///
+  /// In en, this message translates to:
+  /// **'Harris-Benedict (original)'**
+  String get formulaHarris;
+
+  /// No description provided for @formulaMifflin.
+  ///
+  /// In en, this message translates to:
+  /// **'Mifflin-St Jeor'**
+  String get formulaMifflin;
+
+  /// No description provided for @formulaKatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Katch-McArdle'**
+  String get formulaKatch;
+
   /// No description provided for @goalSection.
   ///
   /// In en, this message translates to:
@@ -282,6 +318,12 @@ abstract class AppLocalizations {
   /// **'Out of range'**
   String get validationOutOfRange;
 
+  /// No description provided for @validationBodyFatRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Body fat required for Katch-McArdle.'**
+  String get validationBodyFatRequired;
+
   /// No description provided for @resultsTitle.
   ///
   /// In en, this message translates to:
@@ -318,6 +360,12 @@ abstract class AppLocalizations {
   /// **'Breakdown'**
   String get breakdown;
 
+  /// No description provided for @formulaUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Formula used'**
+  String get formulaUsed;
+
   /// No description provided for @targetCalories.
   ///
   /// In en, this message translates to:
@@ -341,6 +389,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'BMI'**
   String get bmi;
+
+  /// No description provided for @bmiPrime.
+  ///
+  /// In en, this message translates to:
+  /// **'BMI prime'**
+  String get bmiPrime;
+
+  /// No description provided for @newBmi.
+  ///
+  /// In en, this message translates to:
+  /// **'New BMI'**
+  String get newBmi;
+
+  /// No description provided for @bmiAlternatives.
+  ///
+  /// In en, this message translates to:
+  /// **'BMI alternatives'**
+  String get bmiAlternatives;
 
   /// No description provided for @idealWeight.
   ///
@@ -366,6 +432,36 @@ abstract class AppLocalizations {
   /// **'kg'**
   String get kgUnit;
 
+  /// No description provided for @compareFormulas.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare formulas'**
+  String get compareFormulas;
+
+  /// No description provided for @requiresBodyFat.
+  ///
+  /// In en, this message translates to:
+  /// **'Requires body fat'**
+  String get requiresBodyFat;
+
+  /// No description provided for @copyResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copyResults;
+
+  /// No description provided for @shareResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shareResults;
+
+  /// No description provided for @resultsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Results copied'**
+  String get resultsCopied;
+
   /// No description provided for @aboutTitle.
   ///
   /// In en, this message translates to:
@@ -381,13 +477,19 @@ abstract class AppLocalizations {
   /// No description provided for @tdeeUsesHB.
   ///
   /// In en, this message translates to:
-  /// **'- TDEE uses the original Harris-Benedict equation.'**
+  /// **'- TDEE uses the formula you select (Harris-Benedict, Mifflin-St Jeor, or Katch-McArdle).'**
   String get tdeeUsesHB;
+
+  /// No description provided for @harrisBenedictTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Harris-Benedict'**
+  String get harrisBenedictTitle;
 
   /// No description provided for @menMetric.
   ///
   /// In en, this message translates to:
-  /// **'Men (metric)'**
+  /// **'Men (Harris-Benedict)'**
   String get menMetric;
 
   /// No description provided for @menMetricFormula.
@@ -399,7 +501,7 @@ abstract class AppLocalizations {
   /// No description provided for @womenMetric.
   ///
   /// In en, this message translates to:
-  /// **'Women (metric)'**
+  /// **'Women (Harris-Benedict)'**
   String get womenMetric;
 
   /// No description provided for @womenMetricFormula.
@@ -408,10 +510,28 @@ abstract class AppLocalizations {
   /// **'BMR = 655 + (9.563 x weight kg) + (1.850 x height cm) - (4.676 x age)'**
   String get womenMetricFormula;
 
+  /// No description provided for @mifflinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mifflin-St Jeor'**
+  String get mifflinTitle;
+
+  /// No description provided for @mifflinMenFormula.
+  ///
+  /// In en, this message translates to:
+  /// **'Men: BMR = (10 x weight kg) + (6.25 x height cm) - (5 x age) + 5'**
+  String get mifflinMenFormula;
+
+  /// No description provided for @mifflinWomenFormula.
+  ///
+  /// In en, this message translates to:
+  /// **'Women: BMR = (10 x weight kg) + (6.25 x height cm) - (5 x age) - 161'**
+  String get mifflinWomenFormula;
+
   /// No description provided for @bodyFatNote.
   ///
   /// In en, this message translates to:
-  /// **'- When body fat is provided, TDEE uses Katch-McArdle:'**
+  /// **'Katch-McArdle (requires body fat):'**
   String get bodyFatNote;
 
   /// No description provided for @katchFormula.
@@ -419,6 +539,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'BMR = 370 + (21.6 x LBM)'**
   String get katchFormula;
+
+  /// No description provided for @bmiFormulasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'BMI formulas'**
+  String get bmiFormulasTitle;
+
+  /// No description provided for @bmiFormula.
+  ///
+  /// In en, this message translates to:
+  /// **'BMI = weight kg / height m^2'**
+  String get bmiFormula;
+
+  /// No description provided for @bmiPrimeFormula.
+  ///
+  /// In en, this message translates to:
+  /// **'BMI prime = BMI / 25'**
+  String get bmiPrimeFormula;
+
+  /// No description provided for @newBmiFormula.
+  ///
+  /// In en, this message translates to:
+  /// **'New BMI = 1.3 x weight kg / height m^2.5'**
+  String get newBmiFormula;
 
   /// No description provided for @idealWeightNote.
   ///

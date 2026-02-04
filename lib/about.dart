@@ -72,6 +72,13 @@ class InfoPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
+                          l10n.harrisBenedictTitle,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
                           l10n.menMetric,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
@@ -92,6 +99,23 @@ class InfoPage extends StatelessWidget {
                           l10n.womenMetricFormula,
                           style: theme.textTheme.bodyMedium,
                         ),
+                        const SizedBox(height: 12),
+                        Text(
+                          l10n.mifflinTitle,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          l10n.mifflinMenFormula,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          l10n.mifflinWomenFormula,
+                          style: theme.textTheme.bodyMedium,
+                        ),
                         const SizedBox(height: 14),
                         Text(
                           l10n.bodyFatNote,
@@ -99,6 +123,28 @@ class InfoPage extends StatelessWidget {
                         ),
                         Text(
                           l10n.katchFormula,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 14),
+                        Text(
+                          l10n.bmiFormulasTitle,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          l10n.bmiFormula,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          l10n.bmiPrimeFormula,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          l10n.newBmiFormula,
                           style: theme.textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 14),
